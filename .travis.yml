@@ -1,5 +1,4 @@
 services:
-  - mongodb
   - postgresql
   - mysql
 
@@ -47,7 +46,12 @@ jobs:
 
     - <<: *e2e_tests
       name: 'E2E Mysql'
-      before_install:
+      before_script:
+        - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.6.6.tgz
+        - tar -zxvf mongodb-linux-x86_64-3.6.6.tgz
+        - mkdir -p ./data/db/27017
+        - mkdir -p ./data/db/27000
+        - ./mongodb-linux-x86_64-3.6.6/bin/mongod --fork --dbpath ./data/db/27017 --syslog --port 27017
         - mysql -e 'CREATE DATABASE strapi_test;'
       env:
         - DB_STRING='--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=travis --dbpassword='
